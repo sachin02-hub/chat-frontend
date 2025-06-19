@@ -3,7 +3,8 @@ import io from "socket.io-client";
 import axios from "axios";
 import "./App.css";
 
-const socket = io("http://localhost:4000");
+const socket = io("https://chat-backend-0ohs.onrender.com"); // use your actual URL
+
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -18,7 +19,7 @@ function App() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const fetchUsers = useCallback(async () => {
-    const res = await axios.get("http://localhost:4000/users");
+    const res = await axios.get("https://chat-backend-0ohs.onrender.com/users");
     setUsers(res.data.filter((u) => u._id !== user?._id));
   }, [user]);
 
@@ -41,7 +42,7 @@ function App() {
 
   useEffect(() => {
     if (user && receiver) {
-      axios.get(`http://localhost:4000/messages?senderId=${user._id}&receiverId=${receiver._id}`)
+      axios.get(`https://chat-backend-0ohs.onrender.com/messages?senderId=${user._id}&receiverId=${receiver._id}`)
         .then(res => setChat(res.data));
     }
   }, [receiver, user]);
@@ -58,7 +59,7 @@ function App() {
     if (!user || !receiver || !message) return;
     const msgObj = { senderId: user._id, receiverId: receiver._id, message };
     socket.emit("sendMessage", msgObj);
-    axios.post("http://localhost:4000/messages", msgObj);
+    axios.post("https://chat-backend-0ohs.onrender.com/messages", msgObj);
     setChat([...chat, msgObj]);
     setMessage("");
   };
@@ -68,12 +69,12 @@ function App() {
     try {
       let res;
       if (authMode === "login") {
-        res = await axios.post("http://localhost:4000/login", {
+        res = await axios.post("https://chat-backend-0ohs.onrender.com/login", {
           email: form.email,
           password: form.password,
         });
       } else {
-        res = await axios.post("http://localhost:4000/users", form);
+        res = await axios.post("https://chat-backend-0ohs.onrender.com/users", form);
       }
       setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
